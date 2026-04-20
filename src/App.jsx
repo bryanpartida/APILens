@@ -1,20 +1,31 @@
-import { useState } from "react";
-import ActionBar from "./components/ActionBar";
-import DataView from "./components/DataView";
-import EmptyState from "./components/EmptyState";
+import { useMemo, useState } from "react";
+import DataView from "./components/DataView/DataView.jsx";
 import ErrorMessage from "./components/ErrorMessage";
 import Header from "./components/Header";
 import JsonInput from "./components/JsonInput";
 import Tabs from "./components/Tabs";
-import UIPreview from "./components/UIPreview";
+import UIPreview from "./components/UIPreview/UIPreview.jsx";
 import sampleJson from "./data/sampleJson";
+import { analyzeJson } from "./utils/jsonAnalysis";
 import { safeParseJson } from "./utils/parseJson";
+import { choosePrimaryCollection } from "./utils/previewDetection";
 
 function App() {
   const [input, setInput] = useState("");
   const [parsedData, setParsedData] = useState(undefined);
   const [activeTab, setActiveTab] = useState("data");
   const [error, setError] = useState("");
+  const [selectedCollectionPath, setSelectedCollectionPath] = useState(null);
+  const [selectedPreviewCollectionPath, setSelectedPreviewCollectionPath] = useState(null);
+  const isAnalyzed = parsedData !== undefined;
+  const analysis = useMemo(
+    () => (parsedData === undefined ? null : analyzeJson(parsedData)),
+    [parsedData],
+  );
+  const primaryCollection = useMemo(
+    () => (analysis ? choosePrimaryCollection(parsedData, analysis.collections) : null),
+    [analysis, parsedData],
+  );
 
   const handleLoadSample = () => {
     setInput(JSON.stringify(sampleJson, null, 2));
@@ -26,41 +37,94 @@ function App() {
 
     if (result.error) {
       setParsedData(undefined);
+      setSelectedCollectionPath(null);
+      setSelectedPreviewCollectionPath(null);
       setError(result.error);
       return;
     }
 
+    const nextAnalysis = analyzeJson(result.data);
+    const nextPrimaryCollection = choosePrimaryCollection(
+      result.data,
+      nextAnalysis.collections,
+    );
+    const nextPreviewCollections = nextAnalysis.collections.filter(
+      (collection) => collection.kind === "array-of-objects",
+    );
+
     setParsedData(result.data);
+    setSelectedCollectionPath(
+      nextPrimaryCollection?.path || nextAnalysis.collections[0]?.path || null,
+    );
+    setSelectedPreviewCollectionPath(
+      (nextPrimaryCollection?.kind === "array-of-objects"
+        ? nextPrimaryCollection.path
+        : null) ||
+        nextPreviewCollections[0]?.path ||
+        null,
+    );
     setActiveTab("data");
     setError("");
   };
 
   return (
-    <main className="min-h-screen text-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <Header />
+    <main id="top" className="min-h-screen overflow-x-hidden text-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-[radial-gradient(circle_at_center,rgba(0,217,255,0.12),transparent_52%)]" />
+      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] min-w-0 flex-col gap-6 px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+        <Header compact={isAnalyzed} />
 
-        <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-4">
-            <JsonInput value={input} onChange={setInput} />
-            <ActionBar onLoadSample={handleLoadSample} onAnalyze={handleAnalyze} />
+        <section id="workspace" className="min-w-0 space-y-4 pb-10">
+          <div
+            className={`mx-auto w-full min-w-0 transition-all duration-500 ease-out ${
+              isAnalyzed ? "max-w-none" : "max-w-5xl"
+            }`}
+          >
+            <JsonInput
+              value={input}
+              onChange={setInput}
+              onLoadSample={handleLoadSample}
+              onAnalyze={handleAnalyze}
+              compact={isAnalyzed}
+            />
             <ErrorMessage message={error} />
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-slate-900/55 p-5 sm:p-6">
-            {parsedData === undefined ? (
-              <EmptyState />
-            ) : (
-              <div className="space-y-5">
+          {isAnalyzed ? (
+            <div className="glass-panel w-full min-w-0 rounded-[2rem] p-4 transition-all duration-500 ease-out sm:p-5 lg:p-6">
+              <div className="min-w-0 space-y-5">
                 <Tabs activeTab={activeTab} onChange={setActiveTab} />
-                {activeTab === "data" ? (
-                  <DataView data={parsedData} />
-                ) : (
-                  <UIPreview data={parsedData} />
-                )}
+                <div className="min-w-0">
+                  {analysis
+                    ? activeTab === "data"
+                      ? (
+                        <DataView
+                          analysis={analysis}
+                          selectedCollectionPath={selectedCollectionPath}
+                          onSelectCollectionPath={setSelectedCollectionPath}
+                          primaryCollection={primaryCollection}
+                        />
+                      )
+                      : (
+                        <UIPreview
+                          analysis={analysis}
+                          selectedCollectionPath={selectedPreviewCollectionPath}
+                          onSelectCollectionPath={setSelectedPreviewCollectionPath}
+                          primaryCollection={primaryCollection}
+                        />
+                      )
+                    : null}
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          ) : null}
+        </section>
+
+        <section
+          id="about"
+          className="mx-auto w-full max-w-5xl pb-10 text-center text-sm leading-7 text-slate-500"
+        >
+          APILens is designed as a focused data lens for frontend developers:
+          inspect structure fast, then see how the same payload could feel inside a UI.
         </section>
       </div>
     </main>

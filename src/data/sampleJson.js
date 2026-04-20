@@ -1,55 +1,63 @@
-const sampleJson = [
-  {
-    id: "prod_1001",
-    productName: "Atlas API Monitor",
-    team: "Platform Ops",
-    description:
-      "Observability dashboard for tracking endpoint latency, uptime, and deployment health across services.",
-    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
-    status: "active",
-    monthlyUsers: 4820,
-    responseTimeMs: 184,
-    uptimePercent: 99.97,
-    tags: ["monitoring", "analytics", "devtools"],
-    owner: {
-      name: "Elena Park",
-      role: "Product Lead",
-    },
+const sampleJson = {
+  actor: "Jason Statham",
+  profession: "Actor",
+  isActive: true,
+  latestProject: "Mutiny",
+  metadata: {
+    nationality: "British",
+    born: 1967,
+    apiVersion: "2.4.0",
   },
-  {
-    id: "prod_1002",
-    productName: "Pulse Billing API",
-    team: "Revenue Systems",
-    description:
-      "Usage-based billing service that aggregates invoice events, rate cards, and account-level plan changes.",
-    imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=900&q=80",
-    status: "beta",
-    monthlyUsers: 1950,
-    responseTimeMs: 246,
-    uptimePercent: 99.89,
-    tags: ["billing", "payments", "events"],
-    owner: {
-      name: "Marcus Reed",
-      role: "Engineering Manager",
+  movies: [
+    {
+      title: "Mutiny",
+      year: 2026,
+      role: "TBA",
+      status: "post-production",
+      poster: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=900&q=80",
     },
-  },
-  {
-    id: "prod_1003",
-    productName: "Northstar Search",
-    team: "Growth Search",
-    description:
-      "Search relevance service powering instant suggestions, ranked results, and personalized discovery cards.",
-    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
-    status: "active",
-    monthlyUsers: 8310,
-    responseTimeMs: 129,
-    uptimePercent: 99.99,
-    tags: ["search", "relevance", "ranking"],
-    owner: {
-      name: "Priya Shah",
-      role: "Staff Engineer",
+    {
+      title: "Levon's Trade",
+      year: 2025,
+      role: "Levon Cade",
+      status: "upcoming",
+      poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=900&q=80",
     },
-  },
-];
+    {
+      title: "The Beekeeper",
+      year: 2024,
+      role: "Adam Clay",
+      status: "released",
+      poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Meg 2: The Trench",
+      year: 2023,
+      role: "Jonas Taylor",
+      status: "released",
+      poster: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=900&q=80",
+    },
+    {
+      title: "Fast X",
+      year: 2023,
+      role: "Deckard Shaw",
+      status: "released",
+      poster: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+    },
+  ],
+  upcomingProjects: [
+    {
+      title: "Mutiny",
+      releaseWindow: "2026-09-18",
+      category: "Action Thriller",
+    },
+    {
+      title: "Untitled Action Project",
+      releaseWindow: "2027-04-02",
+      category: "Franchise",
+    },
+  ],
+  platforms: ["Theaters", "Prime Video", "Apple TV"],
+};
 
 export default sampleJson;
