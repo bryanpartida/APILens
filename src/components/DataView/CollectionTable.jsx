@@ -23,7 +23,7 @@ function TableCell({ value }) {
         <button
           type="button"
           onClick={() => setIsExpanded((current) => !current)}
-          className="rounded-md border border-cyan-400/20 bg-cyan-400/8 px-2 py-1 text-xs text-cyan-200 transition hover:border-cyan-400/35 hover:bg-cyan-400/12 focus:outline-none focus:ring-2 focus:ring-cyan-400/35"
+          className="rounded-md border border-lime-300/20 bg-lime-300/8 px-2 py-1 font-mono text-xs text-lime-200 transition hover:border-lime-300/35 hover:bg-lime-300/12 focus:outline-none focus:ring-2 focus:ring-lime-300/35"
         >
           {isExpanded ? "Collapse" : "Expand"}
         </button>
@@ -45,7 +45,7 @@ function CollectionTable({ collection }) {
 
   if (!collection.itemCount) {
     return (
-      <div className="rounded-[1.4rem] border border-dashed border-white/10 bg-white/3 p-5 text-sm text-slate-400">
+      <div className="rounded-md border border-dashed border-white/10 bg-white/3 p-5 text-sm text-slate-400">
         This collection is empty.
       </div>
     );
@@ -63,11 +63,11 @@ function CollectionTable({ collection }) {
           </div>
         ) : null}
 
-        <div className="w-full max-w-full overflow-x-auto rounded-[1.5rem] border border-white/6 bg-[#081022]">
+        <div className="w-full max-w-full overflow-x-auto rounded-md border border-white/6 bg-zinc-950">
           <table className="min-w-full table-auto divide-y divide-white/10">
             <thead className="bg-white/2">
               <tr>
-                <th className="whitespace-nowrap px-4 py-4 text-left text-sm font-medium text-cyan-300">
+                <th className="whitespace-nowrap px-4 py-4 text-left font-mono text-sm font-medium text-lime-300">
                   value
                 </th>
               </tr>
@@ -108,14 +108,14 @@ function CollectionTable({ collection }) {
         </div>
       ) : null}
 
-      <div className="w-full max-w-full overflow-x-auto rounded-[1.5rem] border border-white/6 bg-[#081022]">
+      <div className="w-full max-w-full overflow-x-auto rounded-md border border-white/6 bg-zinc-950">
         <table className="min-w-full table-auto divide-y divide-white/10">
           <thead className="bg-white/2">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column}
-                  className="whitespace-nowrap px-4 py-4 text-left text-sm font-medium text-cyan-300"
+                  className="whitespace-nowrap px-4 py-4 text-left font-mono text-sm font-medium text-lime-300"
                 >
                   {column}
                 </th>

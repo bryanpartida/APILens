@@ -1,7 +1,7 @@
 export function BrandMark({ className = "h-11 w-11" }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-cyan-300 shadow-[0_0_30px_rgba(0,217,255,0.15)] ${className}`}
+      className={`flex items-center justify-center rounded-lg border border-lime-300/40 bg-lime-300/10 text-lime-300 shadow-[0_0_22px_rgba(163,230,53,0.12)] ${className}`}
       aria-hidden="true"
     >
       <span className="font-mono text-xl font-semibold">{`{}`}</span>
