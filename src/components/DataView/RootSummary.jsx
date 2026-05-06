@@ -2,8 +2,8 @@ import { formatValue, summarizeValue } from "../../utils/valueFormatters";
 
 function PrimitiveFieldCard({ field }) {
   return (
-    <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
-      <div className="text-xs uppercase tracking-[0.18em] text-slate-500">{field.key}</div>
+    <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
+      <div className="font-mono text-xs text-zinc-500">{field.key}</div>
       <div className="mt-3 break-words whitespace-pre-wrap text-base text-slate-100">
         {formatValue(field.value)}
       </div>
@@ -13,7 +13,7 @@ function PrimitiveFieldCard({ field }) {
 
 function NestedObjectCard({ objectSummary }) {
   return (
-    <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
+    <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
       <div className="text-sm font-medium text-white">{objectSummary.path}</div>
       <div className="mt-1 text-sm text-slate-500">
         {objectSummary.keyCount} fields, {objectSummary.primitiveFields.length} primitive fields
@@ -34,7 +34,7 @@ function RootSummary({ analysis }) {
   const { rootType, rootSummary } = analysis;
 
   return (
-    <section className="panel-inset w-full min-w-0 overflow-hidden rounded-[1.6rem] p-4 sm:p-6">
+    <section className="panel-inset w-full min-w-0 overflow-hidden p-4 sm:p-6">
       <div className="mb-4">
         <h3 className="text-[1.2rem] font-medium text-slate-200">Root Summary</h3>
         <p className="mt-1 text-sm text-slate-500">
@@ -44,8 +44,8 @@ function RootSummary({ analysis }) {
       </div>
 
       {rootType === "primitive" ? (
-        <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
-          <div className="text-xs uppercase tracking-[0.18em] text-slate-500">value</div>
+        <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
+          <div className="font-mono text-xs text-zinc-500">value</div>
           <div className="mt-3 break-words whitespace-pre-wrap text-base text-slate-100">
             {formatValue(rootSummary.value)}
           </div>
@@ -54,8 +54,8 @@ function RootSummary({ analysis }) {
 
       {rootType === "array" ? (
         <div className="grid min-w-0 gap-3 md:grid-cols-3">
-          <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
-            <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Root Dataset</div>
+          <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
+            <div className="font-mono text-xs text-zinc-500">Root Dataset</div>
             <div className="mt-3 break-words text-base text-slate-100">
               The root payload is an array with {rootSummary.itemCount} items.
             </div>
@@ -63,16 +63,16 @@ function RootSummary({ analysis }) {
 
           {rootSummary.rootCollection ? (
             <>
-              <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
-                <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
+              <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
+                <div className="font-mono text-xs text-zinc-500">
                   Detected Fields
                 </div>
                 <div className="mt-3 break-words text-base text-slate-100">
                   {rootSummary.rootCollection.fields.join(", ") || "None detected"}
                 </div>
               </div>
-              <div className="min-w-0 rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
-                <div className="text-xs uppercase tracking-[0.18em] text-slate-500">
+              <div className="min-w-0 rounded-md border border-white/6 bg-white/3 p-4">
+                <div className="font-mono text-xs text-zinc-500">
                   Collection Type
                 </div>
                 <div className="mt-3 break-words text-base text-slate-100">
@@ -93,7 +93,7 @@ function RootSummary({ analysis }) {
               ))}
             </div>
           ) : (
-            <div className="rounded-[1.3rem] border border-dashed border-white/10 bg-white/3 p-4 text-sm text-slate-400">
+            <div className="rounded-md border border-dashed border-white/10 bg-white/3 p-4 text-sm text-slate-400">
               No primitive root fields were detected. This object is mostly nested data.
             </div>
           )}
@@ -105,7 +105,7 @@ function RootSummary({ analysis }) {
                 {rootSummary.collectionFields.map((collection) => (
                   <span
                     key={collection.path}
-                    className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-sm text-cyan-200"
+                    className="rounded-md border border-lime-300/20 bg-lime-300/10 px-3 py-1 font-mono text-sm text-lime-200"
                   >
                     {collection.path} ({collection.itemCount})
                   </span>

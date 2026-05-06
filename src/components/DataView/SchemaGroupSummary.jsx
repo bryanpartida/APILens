@@ -4,7 +4,7 @@ function SchemaGroupSummary({ collection, onSelectCollectionPath }) {
   }
 
   return (
-    <div className="rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
+    <div className="rounded-md border border-white/6 bg-white/3 p-4">
       <div className="text-sm font-medium text-slate-200">Schema Groups</div>
       <p className="mt-1 text-sm text-slate-500">
         APILens found multiple object shapes inside this collection.
@@ -26,7 +26,7 @@ function SchemaGroupSummary({ collection, onSelectCollectionPath }) {
                 <div className="min-w-0 break-words text-sm font-medium text-white">
                   {group.label}
                 </div>
-                <span className="rounded-full bg-white/6 px-2 py-0.5 text-xs text-slate-400">
+                <span className="rounded bg-white/6 px-2 py-0.5 font-mono text-xs text-slate-400">
                   {group.itemCount} items
                 </span>
               </div>
@@ -35,7 +35,7 @@ function SchemaGroupSummary({ collection, onSelectCollectionPath }) {
                 {group.fields.map((field) => (
                   <span
                     key={`${group.id}-${field}`}
-                    className="rounded-full border border-cyan-400/18 bg-cyan-400/8 px-2 py-1 text-xs text-cyan-100"
+                    className="rounded border border-lime-300/18 bg-lime-300/8 px-2 py-1 font-mono text-xs text-lime-100"
                   >
                     {field}
                   </span>
@@ -46,7 +46,7 @@ function SchemaGroupSummary({ collection, onSelectCollectionPath }) {
                 <button
                   type="button"
                   onClick={() => onSelectCollectionPath(derivedPath)}
-                  className="mt-3 rounded-md border border-white/8 bg-white/4 px-3 py-1.5 text-xs text-slate-200 transition hover:border-cyan-400/25 hover:text-cyan-100 focus:outline-none focus:ring-2 focus:ring-cyan-400/35"
+                  className="mt-3 rounded-md border border-white/8 bg-white/4 px-3 py-1.5 font-mono text-xs text-slate-200 transition hover:border-lime-300/25 hover:text-lime-100 focus:outline-none focus:ring-2 focus:ring-lime-300/35"
                 >
                   Inspect group
                 </button>

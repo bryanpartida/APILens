@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import DataView from "./components/DataView/DataView.jsx";
 import ErrorMessage from "./components/ErrorMessage";
+import Footer from "./components/Footer";
 import Header from "./components/Header";
 import JsonInput from "./components/JsonInput";
 import Tabs from "./components/Tabs";
@@ -69,7 +70,6 @@ function App() {
 
   return (
     <main id="top" className="min-h-screen overflow-x-hidden text-white">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-[radial-gradient(circle_at_center,rgba(0,217,255,0.12),transparent_52%)]" />
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] min-w-0 flex-col gap-6 px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
         <Header compact={isAnalyzed} />
 
@@ -90,7 +90,7 @@ function App() {
           </div>
 
           {isAnalyzed ? (
-            <div className="glass-panel w-full min-w-0 rounded-[2rem] p-4 transition-all duration-500 ease-out sm:p-5 lg:p-6">
+            <div className="glass-panel w-full min-w-0 p-4 transition-all duration-500 ease-out sm:p-5 lg:p-6">
               <div className="min-w-0 space-y-5">
                 <Tabs activeTab={activeTab} onChange={setActiveTab} />
                 <div className="min-w-0">
@@ -119,13 +119,7 @@ function App() {
           ) : null}
         </section>
 
-        <section
-          id="about"
-          className="mx-auto w-full max-w-5xl pb-10 text-center text-sm leading-7 text-slate-500"
-        >
-          APILens is designed as a focused data lens for frontend developers:
-          inspect structure fast, then see how the same payload could feel inside a UI.
-        </section>
+        <Footer />
       </div>
     </main>
   );

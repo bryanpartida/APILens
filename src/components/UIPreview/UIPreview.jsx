@@ -16,7 +16,7 @@ function RootContext({ fields }) {
         {fields.map((field) => (
           <span
             key={field.key}
-            className="rounded-2xl border border-cyan-400/18 bg-cyan-400/8 px-3 py-1.5 text-sm text-cyan-100 break-words"
+            className="rounded-md border border-lime-300/18 bg-lime-300/8 px-3 py-1.5 font-mono text-sm text-lime-100 break-words"
           >
             {field.key}: {formatValue(field.value)}
           </span>
@@ -28,7 +28,7 @@ function RootContext({ fields }) {
 
 function PrimitiveCollectionPreview({ collection }) {
   return (
-    <div className="panel-inset rounded-[1.7rem] p-4 sm:p-5">
+    <div className="panel-inset p-4 sm:p-5">
       <div className="mb-4 text-sm text-slate-500">
         This dataset is an array of primitives, so APILens is previewing it as a
         structured list instead of cards.
@@ -38,7 +38,7 @@ function PrimitiveCollectionPreview({ collection }) {
         {collection.items.slice(0, 20).map((item, index) => (
           <span
             key={`${collection.path}-${index}`}
-            className="rounded-2xl border border-white/8 bg-white/4 px-3 py-2 text-sm text-slate-200"
+            className="rounded-md border border-white/8 bg-white/4 px-3 py-2 font-mono text-sm text-slate-200"
           >
             {typeof item === "object" ? summarizeValue(item) : formatValue(item)}
           </span>
@@ -69,11 +69,11 @@ function UIPreview({
     return (
       <section className="w-full min-w-0 space-y-5">
         <div>
-          <h2 className="text-[1.55rem] font-medium tracking-[-0.03em] text-white">
+          <h2 className="text-[1.55rem] font-medium text-white">
             UI Preview
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            APILens selected <span className="text-cyan-300">{selectedCollection.path}</span>{" "}
+            APILens selected <span className="text-lime-300">{selectedCollection.path}</span>{" "}
             as the most meaningful dataset for UI cards.
           </p>
         </div>
@@ -108,7 +108,7 @@ function UIPreview({
     return (
       <section className="w-full min-w-0 space-y-5">
         <div>
-          <h2 className="text-[1.55rem] font-medium tracking-[-0.03em] text-white">
+          <h2 className="text-[1.55rem] font-medium text-white">
             UI Preview
           </h2>
           <p className="mt-2 text-sm text-slate-500">
@@ -125,8 +125,8 @@ function UIPreview({
   }
 
   return (
-    <section className="panel-inset rounded-[1.7rem] p-5 text-center">
-      <h2 className="text-[1.55rem] font-medium tracking-[-0.03em] text-white">
+    <section className="panel-inset p-5 text-center">
+      <h2 className="text-[1.55rem] font-medium text-white">
         UI Preview
       </h2>
       <p className="mt-2 text-sm text-slate-500">
