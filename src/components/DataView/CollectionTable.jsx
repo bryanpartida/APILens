@@ -1,16 +1,39 @@
-import { summarizeValue, truncateText } from "../../utils/valueFormatters";
+import { useState } from "react";
+import { formatValue, summarizeValue, truncateText } from "../../utils/valueFormatters";
 
 const TABLE_PREVIEW_LIMIT = 25;
 
 function TableCell({ value }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isNested = value !== null && typeof value === "object";
+  const formattedValue = formatValue(value);
   const summary = truncateText(summarizeValue(value), 160);
+  const canExpand = isNested || formattedValue.length > summary.length;
 
   return (
-    <div
-      className="max-w-full break-words whitespace-normal text-sm leading-6 text-slate-300"
-      title={typeof value === "string" ? value : undefined}
-    >
-      {summary}
+    <div className="max-w-full space-y-2 text-sm leading-6 text-slate-300">
+      <div
+        className="max-w-full break-words whitespace-normal"
+        title={typeof value === "string" ? value : undefined}
+      >
+        {summary}
+      </div>
+
+      {canExpand ? (
+        <button
+          type="button"
+          onClick={() => setIsExpanded((current) => !current)}
+          className="rounded-md border border-cyan-400/20 bg-cyan-400/8 px-2 py-1 text-xs text-cyan-200 transition hover:border-cyan-400/35 hover:bg-cyan-400/12 focus:outline-none focus:ring-2 focus:ring-cyan-400/35"
+        >
+          {isExpanded ? "Collapse" : "Expand"}
+        </button>
+      ) : null}
+
+      {isExpanded ? (
+        <pre className="max-h-64 max-w-[22rem] overflow-auto whitespace-pre-wrap break-words rounded-md border border-white/8 bg-black/20 p-3 text-xs leading-5 text-slate-200 sm:max-w-[32rem]">
+          {formattedValue}
+        </pre>
+      ) : null}
     </div>
   );
 }
@@ -68,12 +91,20 @@ function CollectionTable({ collection }) {
     (item) => item && typeof item === "object" && !Array.isArray(item),
   );
   const columns = collection.fields.length ? collection.fields : ["value"];
+  const hiddenPreviewItems = previewRows.length - objectRows.length;
 
   return (
     <div className="space-y-3">
       {isLimited ? (
         <div className="text-sm text-slate-500">
           Showing first {TABLE_PREVIEW_LIMIT} of {collection.itemCount} items.
+        </div>
+      ) : null}
+
+      {hiddenPreviewItems > 0 ? (
+        <div className="text-sm text-slate-500">
+          This mixed collection has {hiddenPreviewItems} primitive preview item
+          {hiddenPreviewItems === 1 ? "" : "s"} outside the object table.
         </div>
       ) : null}
 

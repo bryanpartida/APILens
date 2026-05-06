@@ -16,6 +16,14 @@ import {
 
 const MAX_STRUCTURE_KEYS = 10;
 const COLLECTION_SAMPLE_LIMIT = 5;
+const DISCRIMINATOR_FIELDS = [
+  "type",
+  "kind",
+  "category",
+  "event",
+  "class",
+  "__typename",
+];
 
 function getTopLevelKeys(data) {
   if (Array.isArray(data)) {
@@ -124,11 +132,89 @@ function getCollectionKind(items) {
     return "array-of-primitives";
   }
 
-  if (objectCount >= Math.ceil(items.length / 2)) {
-    return "array-of-objects";
+  return "array-mixed";
+}
+
+function getSchemaSignature(item) {
+  return Object.entries(item)
+    .map(([key, value]) => `${key}:${getValueType(value, key)}`)
+    .sort()
+    .join("|");
+}
+
+function getBestDiscriminatorField(items) {
+  const objectItems = items.filter(isPlainObject);
+
+  if (objectItems.length < 2) {
+    return null;
   }
 
-  return "array-mixed";
+  const candidates = DISCRIMINATOR_FIELDS.map((field) => {
+    const values = objectItems
+      .map((item) => item[field])
+      .filter((value) => isPrimitive(value) && value !== null && value !== "");
+    const uniqueValues = new Set(values.map(String));
+
+    return {
+      field,
+      coverage: values.length / objectItems.length,
+      uniqueCount: uniqueValues.size,
+    };
+  });
+
+  return (
+    candidates
+      .filter((candidate) => candidate.coverage >= 0.6 && candidate.uniqueCount > 1)
+      .sort(
+        (left, right) =>
+          right.coverage - left.coverage || right.uniqueCount - left.uniqueCount,
+      )[0]?.field || null
+  );
+}
+
+function buildSchemaGroups(items) {
+  const objectItems = items.filter(isPlainObject);
+
+  if (!objectItems.length) {
+    return [];
+  }
+
+  const discriminatorField = getBestDiscriminatorField(objectItems);
+  const groups = new Map();
+
+  objectItems.forEach((item) => {
+    const schemaSignature = getSchemaSignature(item);
+    const discriminatorValue = discriminatorField ? item[discriminatorField] : null;
+    const groupKey =
+      discriminatorField && discriminatorValue !== undefined && discriminatorValue !== null
+        ? `${discriminatorField}:${String(discriminatorValue)}`
+        : schemaSignature;
+    const label =
+      discriminatorField && discriminatorValue !== undefined && discriminatorValue !== null
+        ? `${discriminatorField}: ${String(discriminatorValue)}`
+        : `schema ${groups.size + 1}`;
+
+    if (!groups.has(groupKey)) {
+      groups.set(groupKey, {
+        id: groupKey,
+        label,
+        discriminatorField,
+        signature: schemaSignature,
+        items: [],
+      });
+    }
+
+    groups.get(groupKey).items.push(item);
+  });
+
+  return Array.from(groups.values())
+    .map((group) => ({
+      ...group,
+      itemCount: group.items.length,
+      fields: getAllKeysFromItems(group.items),
+      fieldTypes: inferFieldTypes(group.items),
+    }))
+    .sort((left, right) => right.itemCount - left.itemCount || left.label.localeCompare(right.label));
 }
 
 function buildObjectSummary(object, pathSegments) {
@@ -300,12 +386,15 @@ function scoreCollection(collection) {
   )
     ? 12
     : 0;
+  score += collection.schemaGroups.length > 1 ? 6 : 0;
+  score -= collection.isDerived ? 18 : 0;
 
   return score;
 }
 
-function analyzeCollection(items, pathSegments) {
+function analyzeCollection(items, pathSegments, options = {}) {
   const objectItems = items.filter(isPlainObject);
+  const primitiveItems = items.filter(isPrimitive);
   const kind = getCollectionKind(items);
   const fields = objectItems.length ? getAllKeysFromItems(objectItems) : ["value"];
   const fieldTypes = objectItems.length
@@ -313,16 +402,23 @@ function analyzeCollection(items, pathSegments) {
     : items.length
       ? { value: Array.from(new Set(items.map((item) => getValueType(item)))) }
       : {};
+  const schemaGroups = buildSchemaGroups(objectItems);
 
   const collection = {
-    path: formatPath(pathSegments),
-    key: getLastNamedSegment(pathSegments),
+    path: options.path || formatPath(pathSegments),
+    key: options.key || getLastNamedSegment(pathSegments),
     depth: getPathDepth(pathSegments),
     itemCount: items.length,
+    objectItemCount: objectItems.length,
+    primitiveItemCount: primitiveItems.length,
     items,
     kind,
     fields,
     fieldTypes,
+    schemaGroups,
+    isDerived: Boolean(options.isDerived),
+    sourcePath: options.sourcePath || null,
+    groupLabel: options.groupLabel || null,
     numericFields: objectItems.length ? detectNumericFields(objectItems) : [],
     stringFields: objectItems.length ? detectStringFields(objectItems) : [],
     booleanFields: objectItems.length ? detectBooleanFields(objectItems) : [],
@@ -347,7 +443,69 @@ function inspectNestedData(data) {
       return;
     }
 
-    collectionMap.set(path, analyzeCollection(value, pathSegments));
+    const collection = analyzeCollection(value, pathSegments);
+    collectionMap.set(path, collection);
+
+    const objectItems = value.filter(isPlainObject);
+    const primitiveItems = value.filter(isPrimitive);
+
+    if (collection.kind === "array-mixed" && objectItems.length) {
+      const objectPath = `${path}.objects`;
+      if (!collectionMap.has(objectPath)) {
+        collectionMap.set(
+          objectPath,
+          analyzeCollection(objectItems, [...pathSegments, "objects"], {
+            path: objectPath,
+            key: "objects",
+            isDerived: true,
+            sourcePath: path,
+            groupLabel: "Object items",
+          }),
+        );
+      }
+    }
+
+    if (collection.kind === "array-mixed" && primitiveItems.length) {
+      const valuePath = `${path}.values`;
+      if (!collectionMap.has(valuePath)) {
+        collectionMap.set(
+          valuePath,
+          analyzeCollection(primitiveItems, [...pathSegments, "values"], {
+            path: valuePath,
+            key: "values",
+            isDerived: true,
+            sourcePath: path,
+            groupLabel: "Primitive values",
+          }),
+        );
+      }
+    }
+
+    collection.schemaGroups
+      .filter((group) => collection.schemaGroups.length > 1 && group.items.length)
+      .slice(0, 6)
+      .forEach((group, index) => {
+        const suffix = group.label
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || `schema-${index + 1}`;
+        const groupPath = `${path}#${suffix}`;
+
+        if (collectionMap.has(groupPath)) {
+          return;
+        }
+
+        collectionMap.set(
+          groupPath,
+          analyzeCollection(group.items, [...pathSegments, suffix], {
+            path: groupPath,
+            key: suffix,
+            isDerived: true,
+            sourcePath: path,
+            groupLabel: group.label,
+          }),
+        );
+      });
   }
 
   function addNestedObject(value, pathSegments) {
@@ -403,7 +561,12 @@ function inspectNestedData(data) {
   }
 
   return {
-    collections: Array.from(collectionMap.values()),
+    collections: Array.from(collectionMap.values()).sort(
+      (left, right) =>
+        Number(left.isDerived) - Number(right.isDerived) ||
+        left.depth - right.depth ||
+        right.score - left.score,
+    ),
     nestedObjects: Array.from(nestedObjectMap.values()),
   };
 }
