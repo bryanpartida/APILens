@@ -3,6 +3,7 @@ import CollectionTable from "./CollectionTable";
 import CollectionTabs from "./CollectionTabs";
 import FieldTypeSummary from "./FieldTypeSummary";
 import RootSummary from "./RootSummary";
+import SchemaGroupSummary from "./SchemaGroupSummary";
 import StructureOverview from "./StructureOverview";
 
 function MetadataCard({ label, value, icon, accentClass = "text-cyan-300" }) {
@@ -83,7 +84,10 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
               <div className="grid min-w-0 gap-3 md:grid-cols-3">
                 <MetadataCard
                   label="Collection"
-                  value={selectedCollection.path}
+                  value={
+                    selectedCollection.groupLabel ||
+                    selectedCollection.path
+                  }
                   icon={<GridIcon className="h-5 w-5" />}
                 />
                 <MetadataCard
@@ -99,6 +103,16 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
                 />
               </div>
 
+              {selectedCollection.isDerived ? (
+                <div className="rounded-[1.3rem] border border-cyan-400/14 bg-cyan-400/6 p-4 text-sm text-cyan-100">
+                  Derived from <span className="font-medium">{selectedCollection.sourcePath}</span>
+                  {selectedCollection.groupLabel
+                    ? ` (${selectedCollection.groupLabel})`
+                    : ""}
+                  .
+                </div>
+              ) : null}
+
               <div className="rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
                 <div className="text-sm font-medium text-slate-200">Field Types</div>
                 <div className="mt-2 break-words text-sm text-slate-500">
@@ -110,6 +124,10 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
                 </div>
               </div>
 
+              <SchemaGroupSummary
+                collection={selectedCollection}
+                onSelectCollectionPath={onSelectCollectionPath}
+              />
               <FieldTypeSummary collection={selectedCollection} />
               <CollectionTable collection={selectedCollection} />
             </div>
