@@ -6,14 +6,14 @@ import RootSummary from "./RootSummary";
 import SchemaGroupSummary from "./SchemaGroupSummary";
 import StructureOverview from "./StructureOverview";
 
-function MetadataCard({ label, value, icon, accentClass = "text-cyan-300" }) {
+function MetadataCard({ label, value, icon, accentClass = "text-lime-300" }) {
   return (
-    <div className="panel-inset min-w-0 rounded-[1.5rem] p-4 sm:p-5">
+    <div className="panel-inset min-w-0 p-4 sm:p-5">
       <div className="flex min-w-0 items-center gap-3 text-slate-500">
         <span className={`shrink-0 ${accentClass}`}>{icon}</span>
         <span className="break-words text-sm sm:text-base">{label}</span>
       </div>
-      <div className="mt-5 break-words text-2xl font-medium tracking-[-0.03em] text-white sm:text-3xl">
+      <div className="mt-5 break-words text-2xl font-medium text-white sm:text-3xl">
         {value}
       </div>
     </div>
@@ -39,7 +39,7 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
           label="Top-level Keys"
           value={analysis.topLevelKeys.length || "n/a"}
           icon={<HashIcon className="h-6 w-6" />}
-          accentClass="text-violet-300"
+          accentClass="text-amber-300"
         />
         <MetadataCard
           label="Detected Collections"
@@ -58,7 +58,7 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
       <StructureOverview structure={analysis.structureOverview} />
 
       {analysis.collections.length ? (
-        <section className="panel-inset w-full min-w-0 overflow-hidden rounded-[1.6rem] p-4 sm:p-6">
+        <section className="panel-inset w-full min-w-0 overflow-hidden p-4 sm:p-6">
           <div className="mb-4">
             <h3 className="text-[1.2rem] font-medium text-slate-200">
               Detected Collections
@@ -94,7 +94,7 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
                   label="Items"
                   value={selectedCollection.itemCount}
                   icon={<HashIcon className="h-5 w-5" />}
-                  accentClass="text-violet-300"
+                  accentClass="text-amber-300"
                 />
                 <MetadataCard
                   label="Fields"
@@ -104,7 +104,7 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
               </div>
 
               {selectedCollection.isDerived ? (
-                <div className="rounded-[1.3rem] border border-cyan-400/14 bg-cyan-400/6 p-4 text-sm text-cyan-100">
+                <div className="rounded-md border border-lime-300/14 bg-lime-300/6 p-4 text-sm text-lime-100">
                   Derived from <span className="font-medium">{selectedCollection.sourcePath}</span>
                   {selectedCollection.groupLabel
                     ? ` (${selectedCollection.groupLabel})`
@@ -113,7 +113,7 @@ function DataView({ analysis, selectedCollectionPath, onSelectCollectionPath, pr
                 </div>
               ) : null}
 
-              <div className="rounded-[1.3rem] border border-white/6 bg-white/3 p-4">
+              <div className="rounded-md border border-white/6 bg-white/3 p-4">
                 <div className="text-sm font-medium text-slate-200">Field Types</div>
                 <div className="mt-2 break-words text-sm text-slate-500">
                   {Object.entries(selectedCollection.fieldTypes).length

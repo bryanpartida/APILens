@@ -29,7 +29,7 @@ function PreviewCard({ item, index = 0, featured = false }) {
 
   return (
     <article
-      className={`panel-inset min-w-0 overflow-hidden rounded-[1.7rem] p-4 sm:p-5 ${
+      className={`panel-inset min-w-0 overflow-hidden p-4 sm:p-5 ${
         featured ? "xl:col-span-2" : ""
       }`}
     >
@@ -37,7 +37,7 @@ function PreviewCard({ item, index = 0, featured = false }) {
         <img
           src={image}
           alt={String(title)}
-          className={`mb-4 w-full rounded-[1.2rem] object-cover ${
+          className={`mb-4 w-full rounded-md object-cover ${
             featured ? "h-52" : "h-40"
           }`}
         />
@@ -46,7 +46,7 @@ function PreviewCard({ item, index = 0, featured = false }) {
       <div className="min-w-0 space-y-4">
         <div className="min-w-0">
           <h3
-            className={`break-words font-medium tracking-[-0.03em] text-white ${
+            className={`break-words font-medium text-white ${
               featured ? "text-2xl sm:text-3xl" : "text-lg"
             }`}
           >
@@ -65,7 +65,7 @@ function PreviewCard({ item, index = 0, featured = false }) {
             {stats.map((stat) => (
               <span
                 key={stat.key}
-                className="rounded-2xl border border-violet-400/18 bg-violet-400/10 px-3 py-1.5 text-xs text-violet-200 sm:text-sm"
+                className="rounded-md border border-amber-300/18 bg-amber-300/10 px-3 py-1.5 font-mono text-xs text-amber-200 sm:text-sm"
               >
                 {stat.key}: {formatValue(stat.value)}
               </span>
