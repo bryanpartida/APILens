@@ -59,7 +59,7 @@ The Node.js requirement comes from the installed Vite toolchain in this project.
 ### Installation
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/bryanpartida/APILens
 cd APILens
 npm install
 ```
@@ -96,12 +96,12 @@ This serves the built app locally so you can verify the production output before
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Starts the Vite development server with hot module replacement. |
-| `npm run build` | Creates an optimized production build in `dist/`. |
-| `npm run preview` | Serves the production build locally for review. |
-| `npm run lint` | Runs ESLint across the project. |
+| Command           | Description                                                     |
+| ----------------- | --------------------------------------------------------------- |
+| `npm run dev`     | Starts the Vite development server with hot module replacement. |
+| `npm run build`   | Creates an optimized production build in `dist/`.               |
+| `npm run preview` | Serves the production build locally for review.                 |
+| `npm run lint`    | Runs ESLint across the project.                                 |
 
 ## How to Use
 
@@ -226,7 +226,3 @@ npm run build
 ```
 
 Deploy the generated `dist/` directory to a static host such as Vercel, Netlify, Cloudflare Pages, or GitHub Pages.
-
-## License
-
-This project does not currently include a license. Add a license before publishing the repository for public reuse.
